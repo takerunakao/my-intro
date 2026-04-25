@@ -312,6 +312,207 @@ p {
 .delay-1 { transition-delay: 0.2s; }
 .delay-2 { transition-delay: 0.4s; }
 
+/* Game Section */
+.game-container {
+    position: relative;
+    background-color: var(--dark-bg);
+}
+
+.split-right.game-container {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 400px;
+}
+
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    transform: rotate(5deg) skew(-5deg);
+    transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.5s ease;
+    padding: 2rem;
+}
+
+.puzzle-tile {
+    background-color: var(--text-color);
+    border: 4px solid var(--accent-3);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    box-shadow: inset 0 0 0 0 transparent;
+}
+
+.puzzle-tile:hover {
+    transform: scale(0.95);
+    border-color: var(--accent-2);
+}
+
+.puzzle-tile.active {
+    background-color: var(--accent-1);
+    border-color: var(--text-color);
+    box-shadow: inset 10px 10px 0 rgba(0,0,0,0.1);
+}
+
+/* Cute Eyes for Puzzle Tiles */
+.puzzle-tile {
+    position: relative; /* ensure absolute children are contained */
+}
+
+.puzzle-tile::before,
+.puzzle-tile::after {
+    content: '';
+    position: absolute;
+    width: 20%;
+    height: 4px;
+    background-color: var(--accent-3);
+    top: 45%;
+    border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.puzzle-tile::before { left: 20%; }
+.puzzle-tile::after { right: 20%; }
+
+/* Awake / Active State (👀 style) */
+.puzzle-tile.active::before,
+.puzzle-tile.active::after {
+    width: 26%;
+    height: 32%;
+    top: 25%;
+    background-color: #ffffff;
+    border-radius: 50%;
+    background-image: radial-gradient(circle at 65% 55%, var(--text-color) 35%, transparent 40%);
+    animation: blink 4s infinite;
+}
+
+/* Adding a slight random blink delay so they don't all blink identically */
+.puzzle-tile:nth-child(even).active::before,
+.puzzle-tile:nth-child(even).active::after {
+    animation-delay: 0.5s;
+}
+
+.puzzle-tile:nth-child(3n).active::before,
+.puzzle-tile:nth-child(3n).active::after {
+    animation-delay: 1.2s;
+}
+
+@keyframes blink {
+    0%, 94%, 98%, 100% { transform: scaleY(1); }
+    96% { transform: scaleY(0.1); }
+}
+
+/* Solved State Animations */
+.puzzle-grid.solved {
+    transform: rotate(0deg) skew(0deg) scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.success-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--accent-1);
+    opacity: 1;
+    cursor: pointer;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.live-stats {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: monospace, var(--font-sans);
+    font-size: clamp(0.9rem, 1.2vw, 1.2rem);
+    font-weight: 700;
+    color: var(--accent-1);
+    letter-spacing: 0.1em;
+    z-index: 5;
+    background-color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--accent-1);
+    box-shadow: 4px 4px 0 var(--accent-3);
+    transition: opacity 0.3s ease;
+}
+
+.live-stats.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.game-stats {
+    margin-top: 1.5rem;
+    font-family: monospace, var(--font-sans);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 700;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--accent-1);
+    padding: 1rem 2rem;
+    transform: skew(-5deg);
+    box-shadow: 6px 6px 0 var(--accent-3);
+    letter-spacing: 0.05em;
+    text-align: left;
+}
+
+.restart-hint {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 2rem;
+    letter-spacing: 0.1em;
+    animation: pulse 2s infinite;
+}
+
+.success-message.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.success-message:not(.hidden) {
+    animation: revealSuccess 1s forwards ease-out;
+    visibility: visible;
+}
+
+.success-title {
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    color: var(--accent-1);
+    text-shadow: 4px 4px 0 var(--accent-3);
+    animation: glitch 3s infinite;
+}
+
+@keyframes revealSuccess {
+    0% { transform: translate(-50%, -40%); opacity: 0; }
+    100% { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+@keyframes glitch {
+    0%, 100% { text-shadow: 4px 4px 0 var(--accent-3), -2px -2px 0 var(--accent-2); }
+    25% { text-shadow: -4px 4px 0 var(--accent-2), 2px -2px 0 var(--accent-3); }
+    50% { text-shadow: 2px -4px 0 var(--accent-3), 4px 2px 0 var(--accent-2); }
+    75% { text-shadow: -2px -4px 0 var(--text-color), -4px 2px 0 var(--accent-1); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .split-layout {
